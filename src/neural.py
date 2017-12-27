@@ -30,7 +30,9 @@ class Layer():
 
 
 class Net():
-    def __init__(self, layer_sizes, training_set=[]):
+    def __init__(self, layer_sizes, training_set=None):
+        if training_set is None:
+            training_set = []
         self.layers = self._make_layers(layer_sizes)
         #TODO validate training_set (modularize training_set functions)
         self.training_set = np.matrix(training_set)
