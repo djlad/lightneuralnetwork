@@ -12,7 +12,7 @@ class Layer():
         self.biases = self.biases.astype(float)
         self.num_inputs = self.weights.shape[0]
         self.num_outputs = self.weights.shape[1]
-    
+
     def threshold(self, applied_biases):
         return expit(applied_biases)
 
@@ -21,7 +21,7 @@ class Layer():
         applied_biases = applied_weights - self.biases
         applied_thresholds = self.threshold(applied_biases)
         return applied_thresholds
-    
+
     def prnt(self):
         print "weights: "
         print self.weights
@@ -34,7 +34,7 @@ class Net():
         self.layers = self._make_layers(layer_sizes)
         #TODO validate training_set (modularize training_set functions)
         self.training_set = np.matrix(training_set)
-    
+
     def _gen_weights(self, prev_layer, cur_layer):
         return [[1] * cur_layer for i in range(prev_layer)]
 
@@ -48,11 +48,11 @@ class Net():
                 layer = Layer(weights, biases)
                 layers.append(layer)
         return layers
-    
+
     def set_weight(self, layer_num, output_neuron_num, input_neuron_num, new_weight):
         weight_layer = self.layers[layer_num]
         weight_layer.weights[input_neuron_num, output_neuron_num] = new_weight
-    
+
     def calc_cost(self):
         example_inputs = self.training_set[0]
         expected_outputs = self.training_set[1]
@@ -60,7 +60,7 @@ class Net():
         sum_error = actual_outputs - expected_outputs
         sum_squared_error = np.square(sum_error)
         return sum_squared_error
-    
+
     def run(self, inputs):
         output = inputs
         for i, layer in enumerate(self.layers):
