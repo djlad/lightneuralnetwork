@@ -13,13 +13,30 @@ class Layer():
         self.num_inputs = self.weights.shape[0]
         self.num_outputs = self.weights.shape[1]
 
-    def threshold(self, applied_biases):
-        return expit(applied_biases)
+    def threshold(self, applied_weights_biases):
+        return expit(applied_weights_biases)
 
-    def run(self, inputs):
+    def threshold_prime(self, applied_weights_biases):
+        return np.multiply(self.threshold(applied_weights_biases), (1 - self.threshold(applied_weights_biases)))
+
+    def calc_z(self, inputs):
         applied_weights = inputs * self.weights
         applied_biases = applied_weights - self.biases
-        applied_thresholds = self.threshold(applied_biases)
+        return applied_biases
+
+    def get_z_and_activation(self, inputs):
+        #not directly tested
+        z = self.calc_z(inputs)
+        print "<- z, at"
+        print z
+        applied_thresholds = self.threshold(z)
+        print applied_thresholds
+        print "--"
+        return z, applied_thresholds
+
+    def run(self, inputs):
+        z = self.calc_z(inputs)
+        applied_thresholds = self.threshold(z)
         return applied_thresholds
 
     def prnt(self):
@@ -32,10 +49,10 @@ class Layer():
 class Net():
     def __init__(self, layer_sizes, training_set=None):
         if training_set is None:
-            training_set = []
+            training_set = [[],[]]
         self.layers = self._make_layers(layer_sizes)
         #TODO validate training_set (modularize training_set functions)
-        self.training_set = np.matrix(training_set)
+        self.training_set = [np.matrix(training_set[0]), np.matrix(training_set[1])]
 
     def _gen_weights(self, prev_layer, cur_layer):
         return [[1] * cur_layer for i in range(prev_layer)]
@@ -62,6 +79,47 @@ class Net():
         sum_error = actual_outputs - expected_outputs
         sum_squared_error = np.square(sum_error)
         return sum_squared_error
+
+    def get_z_and_activation(self, inputs):
+        #not directly tested
+        activation = inputs
+        zs = []
+        activations = []
+        for layer in self.layers:
+            z, activation = layer.get_z_and_activation(activation)
+            zs.append(z)
+            activations.append(activation)
+        return zs, activations
+
+    def train(self, training_set=None):
+        if training_set is None:
+            training_set = self.training_set#validate training set here
+        example_inputs = training_set[0]
+        example_outputs = training_set[1]
+        #self.prnt()
+        for x, y_expected in zip(example_inputs, example_outputs):
+            print 'seperate example'
+            zs, activations = self.get_z_and_activation(x)
+            gradient = self.calc_gradient(x, y_expected, zs, activations)
+            print "x,zs, act, gradient"
+            print x
+            print zs
+            print activations
+            print gradient
+            print "end example"
+    
+    def calc_gradient(self, x, y_expected, zs, activations):
+        #change in C with respect to neuron inputs * weights + biases(aka Z)
+        #this is somewhat unclear, but it implements back propagation to calc gradient
+        dCdZ = []
+        sp = self.layers[-1].threshold_prime(zs[-1])
+        last_layer_dCdZ = np.multiply(sp, activations[-1] - y_expected)
+        dCdZ.append(last_layer_dCdZ)
+        for layer_num in range(len(zs)-2, -1, -1):
+            sp = self.layers[layer_num].threshold_prime(zs[layer_num])
+            layer_dCdZ = np.multiply(sp, dCdZ[-1] * self.layers[layer_num+1].weights.transpose())
+            dCdZ.append(layer_dCdZ)
+        return dCdZ[::-1]
 
     def run(self, inputs):
         output = inputs
