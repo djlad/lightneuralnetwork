@@ -34,14 +34,14 @@ class TestNet(unittest.TestCase):
         net = self.sample_net_1()
         zs, activations = net.get_z_and_activation([0,0])
         expected_zs = [[[ 0.,  0.,  0.]], [[ 0.85]]]
-        expected_activations = [[[ 0.5,  0.5,  0.5]], [[ 0.70056714]]]
+        expected_activations = [[[0,0]], [[ 0.5,  0.5,  0.5]], [[ 0.70056714]]]
         self.assertEqual(len(zs), len(expected_zs))
         self.assertEqual(len(activations), len(expected_activations))
         self.assertEqual(net.run([0, 0]), activations[-1])
     
     def test_train(self):
         training_set = self.and_gate_training_set()
-        net = net_module.Net([2, 3, 1], training_set)
+        net = net_module.Net([2, 12, 1], training_set)
         net.train()
 
     #generated test data:
