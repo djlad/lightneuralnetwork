@@ -11,7 +11,7 @@ class TestNet(unittest.TestCase):
         expected_output = [0.490794321114148, 0.55743360861882951,
                            0.54113913657798884, 0.050904261638902749]
         for ao, eo in zip(cost, expected_output):
-            self.assertAlmostEquals(ao[0, 0], eo)
+            self.assertAlmostEquals(ao[0], eo)
 
     def test_set_weight(self):
         net = net_module.Net([2, 3, 1])

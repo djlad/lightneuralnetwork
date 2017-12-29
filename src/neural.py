@@ -6,9 +6,9 @@ from scipy.special import expit
 
 class Layer():
     def __init__(self, weights, biases):
-        self.weights = np.matrix(weights)
+        self.weights = np.array(weights)
         self.weights = self.weights.astype(float)
-        self.biases = np.matrix(biases)
+        self.biases = np.array(biases)
         self.biases = self.biases.astype(float)
         self.num_inputs = self.weights.shape[0]
         self.num_outputs = self.weights.shape[1]
@@ -20,18 +20,14 @@ class Layer():
         return np.multiply(self.threshold(applied_weights_biases), (1 - self.threshold(applied_weights_biases)))
 
     def calc_z(self, inputs):
-        applied_weights = inputs * self.weights
+        applied_weights = np.dot(inputs, self.weights)
         applied_biases = applied_weights - self.biases
         return applied_biases
 
     def get_z_and_activation(self, inputs):
         #not directly tested
         z = self.calc_z(inputs)
-        print "<- z, at"
-        print z
         applied_thresholds = self.threshold(z)
-        print applied_thresholds
-        print "--"
         return z, applied_thresholds
 
     def run(self, inputs):
@@ -52,7 +48,7 @@ class Net():
             training_set = [[],[]]
         self.layers = self._make_layers(layer_sizes)
         #TODO validate training_set (modularize training_set functions)
-        self.training_set = [np.matrix(training_set[0]), np.matrix(training_set[1])]
+        self.training_set = [np.array(training_set[0]), np.array(training_set[1])]
 
     def _gen_weights(self, prev_layer, cur_layer):
         return [[1] * cur_layer for i in range(prev_layer)]
@@ -70,7 +66,7 @@ class Net():
 
     def set_weight(self, layer_num, output_neuron_num, input_neuron_num, new_weight):
         weight_layer = self.layers[layer_num]
-        weight_layer.weights[input_neuron_num, output_neuron_num] = new_weight
+        weight_layer.weights[input_neuron_num][output_neuron_num] = new_weight
 
     def calc_cost(self):
         example_inputs = self.training_set[0]
@@ -101,13 +97,9 @@ class Net():
             print 'seperate example'
             zs, activations = self.get_z_and_activation(x)
             gradient = self.calc_gradient(x, y_expected, zs, activations)
-            print "x,zs, act, gradient"
-            print x
-            print zs
-            print activations
+            print "gradient"
             print gradient
-            print "end example"
-    
+
     def calc_gradient(self, x, y_expected, zs, activations):
         #change in C with respect to neuron inputs * weights + biases(aka Z)
         #this is somewhat unclear, but it implements back propagation to calc gradient
@@ -119,7 +111,14 @@ class Net():
             sp = self.layers[layer_num].threshold_prime(zs[layer_num])
             layer_dCdZ = np.multiply(sp, dCdZ[-1] * self.layers[layer_num+1].weights.transpose())
             dCdZ.append(layer_dCdZ)
-        return dCdZ[::-1]
+        bias_gradient = dCdZ[::-1]
+        weight_gradient = []
+        print x
+        print "i m iter"
+        print x[0] *2 
+        print "end"
+        print self.layers[0].weights
+        return bias_gradient
 
     def run(self, inputs):
         output = inputs
