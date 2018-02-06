@@ -35,4 +35,5 @@ net.train()
 
 ## run tests:
 cd lightneuralnetwork/src
+
 ./runtests.bat
