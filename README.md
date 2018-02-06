@@ -24,11 +24,13 @@ example_outputs = [
 ]
 
 example_set = [example_inputs, example_outputs]
-\#create neural network with 2 inputs, 12 hidden nodes, 1 output
+#create neural network with 2 inputs, 12 hidden nodes, 1 output
 net = lightneuralnetwork.Net([2, 12, 1], example_set)
-\#run with inputs [1, 0] and [0, 0]
+#run with inputs [1, 0] and [0, 0]
 net.run([[1,0], [0,0]])
-\#check examples.py for more details
+#train with example_set
+net.train()
+#check examples.py for more details
 ```
 
 ## run tests:
