@@ -121,12 +121,7 @@ class Net():
             
             if (i+1) % 2000 == 0:
                 print self.calc_cost()
-            '''
-            if (i+1) % 2000 == 0 and self.calc_cost() > last_er:
-                break
-            else:
-                last_er = self.calc_cost()
-            '''
+        print "training cycle completed"
         print training_set[0]
         print training_set[1]
         print self.run([0,0])
