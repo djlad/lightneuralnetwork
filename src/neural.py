@@ -78,19 +78,15 @@ class Net():
                 else:
                     sum_weight_gradient += weight_gradient
                     sum_bias_gradient += bias_gradient
-            for layer, layer_weight_gradient, layer_bias_gradient in izip(self.layers, sum_weight_gradient, sum_bias_gradient):
+
+            layers_gradients = izip(self.layers, sum_weight_gradient, sum_bias_gradient)
+            for layer, layer_weight_gradient, layer_bias_gradient in layers_gradients:
                 layer.weights = layer.weights + layer_weight_gradient * learning_rate
                 layer.biases = layer.biases + layer_bias_gradient * learning_rate
-            
+
             if (i+1) % 2000 == 0:
                 print self.calc_cost()
         print "training cycle completed"
-        print training_set[0]
-        print training_set[1]
-        print self.run([0,0])
-        print self.run([0,1])
-        print self.run([1,0])
-        print self.run([1,1])
 
     def calc_gradient(self, x, y_expected):
         #change in C with respect to neuron inputs * weights + biases(aka Z)
@@ -117,8 +113,6 @@ class Net():
     def run(self, inputs):
         output = inputs
         for i, layer in enumerate(self.layers):
-            #print "output from layer " + str(i) + " to " + str(i+1)
-            #print output
             output = layer.run(output)
         return output
 
