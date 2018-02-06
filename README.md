@@ -8,14 +8,14 @@ git clone url
 
 ``` python
 import lightneuralnetwork
-\#and gate inputs
+#and gate inputs
 example_inputs = [
     [0, 0],
     [0, 1],
     [1, 0],
     [1, 1]
 ]
-\#and gate outputs
+#and gate outputs
 example_outputs = [
     [0],
     [0],
