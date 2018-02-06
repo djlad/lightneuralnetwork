@@ -99,7 +99,7 @@ class Net():
     def train(self, training_set=None, learning_rate=.0005):
         self.randomize_wb()
         last_er = float("inf")
-        for i in range(500000):
+        for i in range(50000*2):
             if training_set is None:
                 training_set = self.training_set#validate training set here
             example_inputs = training_set[0]
